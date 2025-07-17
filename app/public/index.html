@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><title>Projet 2 - DevOps</title></head>
+<body>
+  <h1>Bienvenue sur mon Projet 2</h1>
+  <p id="msg">Chargement du message...</p>
+
+  <script>
+    fetch('/api/hello')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('msg').textContent = data.message;
+      });
+  </script>
+</body>
+</html>
