@@ -1,0 +1,20 @@
+### 🔒 `.gitignore` de base
+
+```gitignore
+# Node.js
+node_modules/
+.env
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Ansible
+*.retry
+
+# Logs
+*.log
+
+# Docker
+*.tar
