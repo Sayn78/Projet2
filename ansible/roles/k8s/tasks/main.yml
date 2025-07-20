@@ -1,0 +1,49 @@
+---
+- name: Désactiver le swap
+  command: swapoff -a
+  become: true
+
+- name: Commenter les lignes de swap dans /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*swap)'
+    replace: '# \1'
+  become: true
+
+- name: Installer les dépendances
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+    update_cache: yes
+    state: present
+  become: true
+
+- name: Ajouter la clé GPG de Kubernetes
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+  become: true
+
+- name: Ajouter le dépôt Kubernetes
+  apt_repository:
+    repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+  become: true
+
+- name: Installer kubelet, kubeadm, kubectl
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Empêcher kubelet d'être mis à jour automatiquement
+  apt:
+    name: kubelet
+    state: hold
+  become: true

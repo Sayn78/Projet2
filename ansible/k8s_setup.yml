@@ -1,0 +1,6 @@
+---
+- name: Installer Kubernetes sur les nœuds
+  hosts: k8s
+  become: true
+  roles:
+    - k8s
