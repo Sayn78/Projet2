@@ -9,7 +9,7 @@ INV_FILE="ansible/inventory.ini"
 # Génère le fichier INI
 cat <<EOF > $INV_FILE
 [k8s]
-$IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/projet2-key.pem
+$IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/sshsenan.pem
 EOF
 
 echo "✅ Fichier $INV_FILE généré avec l'adresse IP $IP"
