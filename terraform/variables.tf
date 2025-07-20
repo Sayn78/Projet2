@@ -4,11 +4,11 @@ variable "aws_region" {
 
 variable "ami_id" {
   description = "AMI Ubuntu 22.04"
-  default     = "ami-07ace442b039f8861" # Ubuntu 22.04 (Paris)
+  default     = "ami-04ec97dc75ac850b1"
 }
 
 variable "instance_type" {
-  default = "t3.medium"
+  default = "t2.micro"
 }
 
 variable "key_name" {
