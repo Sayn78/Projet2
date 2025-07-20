@@ -1,9 +1,10 @@
 ---
 - name: Initialiser le cluster Kubernetes (master)
   become: true
-  ansible.builtin.command: kubeadm init --pod-network-cidr=10.244.0.0/16
+  ansible.builtin.command: kubeadm init --pod-network-cidr={{ pod_network_cidr }} --ignore-preflight-errors=NumCPU,Mem,CRI
   args:
     creates: /etc/kubernetes/admin.conf
+
 
 - name: Créer le dossier .kube
   become: true

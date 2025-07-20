@@ -1,0 +1,14 @@
+---
+- name: Installer containerd
+  become: true
+  apt:
+    name: containerd
+    state: present
+    update_cache: yes
+
+- name: Activer et démarrer le service containerd
+  become: true
+  systemd:
+    name: containerd
+    enabled: true
+    state: started

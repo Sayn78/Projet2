@@ -1,4 +1,11 @@
 ---
+
+- name: Préparer le runtime containerd
+  hosts: k8s
+  become: true
+  roles:
+    - containerd
+    
 - name: Installer Kubernetes sur la VM EC2
   hosts: k8s
   become: true
@@ -11,3 +18,4 @@
   tasks:
     - import_tasks: roles/k8s/tasks/init_master.yml
       tags: init-master
+
