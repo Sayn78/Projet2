@@ -1,54 +1,47 @@
 ---
 - name: Désactiver le swap
-  command: swapoff -a
   become: true
+  ansible.builtin.command: swapoff -a
 
 - name: Commenter les lignes de swap dans /etc/fstab
-  replace:
+  become: true
+  ansible.builtin.replace:
     path: /etc/fstab
     regexp: '^([^#].*swap)'
     replace: '# \1'
-  become: true
 
-- name: Installer les dépendances
-  apt:
-    name:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-    update_cache: yes
-    state: present
+- name: Créer le dossier pour les clés APT
   become: true
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
 
-- name: Ajouter la clé GPG de Kubernetes (format .gpg)
-  shell: |
-    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-    gpg --dearmor -o /usr/share/keyrings/kubernetes-archive-keyring.gpg
+- name: Ajouter la clé GPG de Kubernetes
+  become: true
+  ansible.builtin.shell: |
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | \
+    gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   args:
-    creates: /usr/share/keyrings/kubernetes-archive-keyring.gpg
-  become: true
+    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-- name: Ajouter le dépôt Kubernetes (Ubuntu 22.04 - jammy)
-  apt_repository:
-    repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-jammy main"
+- name: Ajouter le dépôt Kubernetes
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /"
     state: present
     filename: kubernetes
-  become: true
-
-
 
 - name: Installer kubelet, kubeadm, kubectl
-  apt:
+  become: true
+  ansible.builtin.apt:
     name:
       - kubelet
       - kubeadm
       - kubectl
     state: present
-    update_cache: yes
-  become: true
+    update_cache: true
 
-- name: Empêcher kubelet d'être mis à jour automatiquement
-  apt:
-    name: kubelet
-    state: hold
+- name: Geler kubelet pour éviter les mises à jour
   become: true
+  ansible.builtin.shell: apt-mark hold kubelet
