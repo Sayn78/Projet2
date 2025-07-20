@@ -20,17 +20,21 @@
     state: present
   become: true
 
-- name: Ajouter la clé GPG de Kubernetes
-  apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present
+- name: Ajouter la clé GPG de Kubernetes (format .gpg)
+  shell: |
+    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+    gpg --dearmor -o /usr/share/keyrings/kubernetes-archive-keyring.gpg
+  args:
+    creates: /usr/share/keyrings/kubernetes-archive-keyring.gpg
   become: true
 
 - name: Ajouter le dépôt Kubernetes
   apt_repository:
-    repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+    repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
     state: present
+    filename: kubernetes
   become: true
+
 
 - name: Installer kubelet, kubeadm, kubectl
   apt:
