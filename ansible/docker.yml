@@ -1,0 +1,6 @@
+---
+- name: Installer Docker sur les nœuds K8s
+  hosts: k8s
+  become: true
+  roles:
+    - docker
