@@ -5,7 +5,7 @@
   become: true
   roles:
     - containerd
-    
+
 - name: Installer Kubernetes sur la VM EC2
   hosts: k8s
   become: true
@@ -15,6 +15,8 @@
 - name: Initialiser le master Kubernetes
   hosts: k8s
   become: true
+  vars:
+    pod_network_cidr: "10.244.0.0/16"
   tasks:
     - import_tasks: roles/k8s/tasks/init_master.yml
       tags: init-master
