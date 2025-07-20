@@ -28,12 +28,13 @@
     creates: /usr/share/keyrings/kubernetes-archive-keyring.gpg
   become: true
 
-- name: Ajouter le dépôt Kubernetes
+- name: Ajouter le dépôt Kubernetes (Ubuntu 22.04 - jammy)
   apt_repository:
-    repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
+    repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-jammy main"
     state: present
     filename: kubernetes
   become: true
+
 
 
 - name: Installer kubelet, kubeadm, kubectl
