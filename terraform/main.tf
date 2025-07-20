@@ -104,16 +104,6 @@ resource "aws_instance" "k8s_node" {
     Name = "Projet2-EC2"
   }
 
-  # Créer une Elastic IP
-  resource "aws_eip" "k8s_eip" {
-    instance = aws_instance.k8s_node.id
-    vpc      = true
-
-    tags = {
-      Name = "Projet2-EIP"
-    }
-  }
-
 
   provisioner "remote-exec" {
     inline = ["echo Instance up!"]
@@ -123,5 +113,15 @@ resource "aws_instance" "k8s_node" {
       private_key = file(var.private_key_path)
       host        = self.public_ip
     }
+  }
+}
+
+# Créer une Elastic IP
+resource "aws_eip" "k8s_eip" {
+  instance = aws_instance.k8s_node.id
+  vpc      = true
+
+  tags = {
+    Name = "Projet2-EIP"
   }
 }
