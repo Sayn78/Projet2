@@ -16,10 +16,11 @@
     mode: '0755'
 
 - name: Copier la config admin.conf dans ~/.kube/config
-  become: true
   ansible.builtin.copy:
     src: /etc/kubernetes/admin.conf
     dest: /home/ubuntu/.kube/config
+    remote_src: true
     owner: ubuntu
     group: ubuntu
-    mode: '0644'
+    mode: '0600'
+
