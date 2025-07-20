@@ -1,0 +1,24 @@
+---
+- name: Initialiser le cluster Kubernetes (master)
+  become: true
+  ansible.builtin.command: kubeadm init --pod-network-cidr=10.244.0.0/16
+  args:
+    creates: /etc/kubernetes/admin.conf
+
+- name: Créer le dossier .kube
+  become: true
+  ansible.builtin.file:
+    path: /home/ubuntu/.kube
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Copier la config admin.conf dans ~/.kube/config
+  become: true
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/ubuntu/.kube/config
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
