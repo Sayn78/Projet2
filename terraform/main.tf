@@ -119,7 +119,6 @@ resource "aws_instance" "k8s_node" {
 # Créer une Elastic IP
 resource "aws_eip" "k8s_eip" {
   instance = aws_instance.k8s_node.id
-  vpc      = true
 
   tags = {
     Name = "Projet2-EIP"
