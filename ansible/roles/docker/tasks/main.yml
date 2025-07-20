@@ -1,44 +1,45 @@
-- name: Setup du serveur EC2 (installer Docker)
-  hosts: webservers
-  become: true
+- name: Installer les dépendances système
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+      - python3-pip
+      - python3-docker
+    state: present
+    update_cache: true
 
-  tasks:
-    - name: Installer les dépendances système
-      apt:
-        name:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - gnupg
-          - lsb-release
-          - python3-pip
-          - python3-docker
-        state: present
-        update_cache: true
+- name: Ajouter la clé GPG de Docker
+  shell: |
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  args:
+    creates: /usr/share/keyrings/docker-archive-keyring.gpg
 
-    - name: Ajouter la clé GPG de Docker
-      shell: |
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-      args:
-        creates: /usr/share/keyrings/docker-archive-keyring.gpg
+- name: Ajouter le dépôt Docker stable
+  apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu focal stable"
+    state: present
+    filename: docker
 
-    - name: Ajouter le dépôt Docker stable
-      apt_repository:
-        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu focal stable"
-        state: present
-        filename: docker
+- name: Installer Docker Engine
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+    update_cache: yes
 
-    - name: Installer Docker Engine
-      apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-        state: present
-        update_cache: yes
+- name: Ajouter l’utilisateur ubuntu au groupe docker
+  user:
+    name: ubuntu
+    groups: docker
+    append: yes
 
-    - name: Démarrer et activer le service Docker
-      service:
-        name: docker
-        state: started
-        enabled: true
+- name: Démarrer et activer le service Docker
+  service:
+    name: docker
+    state: started
+    enabled: true
