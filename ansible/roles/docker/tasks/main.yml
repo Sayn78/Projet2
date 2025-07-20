@@ -1,36 +1,44 @@
----
-- name: Installer les paquets requis
-  apt:
-    name:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - gnupg
-      - lsb-release
-    state: present
-    update_cache: yes
+- name: Setup du serveur EC2 (installer Docker)
+  hosts: webservers
+  become: true
 
-- name: Ajouter la clé GPG Docker
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
+  tasks:
+    - name: Installer les dépendances système
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - python3-pip
+          - python3-docker
+        state: present
+        update_cache: true
 
-- name: Ajouter le dépôt Docker
-  apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
-    state: present
+    - name: Ajouter la clé GPG de Docker
+      shell: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+      args:
+        creates: /usr/share/keyrings/docker-archive-keyring.gpg
 
-- name: Installer Docker
-  apt:
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-    state: latest
-    update_cache: yes
+    - name: Ajouter le dépôt Docker stable
+      apt_repository:
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu focal stable"
+        state: present
+        filename: docker
 
-- name: Ajouter l’utilisateur ubuntu au groupe docker
-  user:
-    name: ubuntu
-    groups: docker
-    append: yes
+    - name: Installer Docker Engine
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: yes
+
+    - name: Démarrer et activer le service Docker
+      service:
+        name: docker
+        state: started
+        enabled: true
