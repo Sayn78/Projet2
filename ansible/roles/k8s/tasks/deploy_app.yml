@@ -1,4 +1,4 @@
----
+
 - name: Créer le dossier pour les manifests
   ansible.builtin.file:
     path: /home/ubuntu/k8s-manifests
@@ -15,8 +15,8 @@
     group: ubuntu
     mode: '0644'
   loop:
-    - "../../k8s/deployment.yaml"
-    - "../../k8s/service.yaml"
+    - "deployment.yaml"
+    - "service.yaml"
 
 - name: Appliquer le déploiement Kubernetes
   ansible.builtin.shell: |

@@ -24,3 +24,6 @@
     group: ubuntu
     mode: '0600'
 
+- name: Déployer l'application Node.js
+  import_tasks: deploy_app.yml
+
