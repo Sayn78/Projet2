@@ -1,0 +1,25 @@
+- name: Créer le dossier pour les manifests
+  ansible.builtin.file:
+    path: /home/ubuntu/k8s-manifests
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Copier les fichiers YAML de l'application Node.js
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/home/ubuntu/k8s-manifests/"
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  loop:
+    - "../../k8s/deployment.yaml"
+    - "../../k8s/service.yaml"
+
+- name: Appliquer le déploiement Kubernetes
+  ansible.builtin.shell: |
+    kubectl apply -f /home/ubuntu/k8s-manifests/deployment.yaml
+    kubectl apply -f /home/ubuntu/k8s-manifests/service.yaml
+  args:
+    executable: /bin/bash

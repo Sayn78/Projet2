@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: projet2-node-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: projet2-node-app
+  template:
+    metadata:
+      labels:
+        app: projet2-node-app
+    spec:
+      containers:
+        - name: node-app
+          image: sayn78300/projet2-node-app:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "200Mi"
+              cpu: "200m"
