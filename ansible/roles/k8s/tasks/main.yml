@@ -45,3 +45,23 @@
 - name: Geler kubelet pour éviter les mises à jour
   become: true
   ansible.builtin.shell: apt-mark hold kubelet
+
+
+- name: Créer le dossier pour les manifests
+  ansible.builtin.file:
+    path: /home/ubuntu/k8s-manifests
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Copier les fichiers YAML de l'application Node.js
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/home/ubuntu/k8s-manifests/"
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  loop:
+    - deployment.yaml
+    - service.yaml
