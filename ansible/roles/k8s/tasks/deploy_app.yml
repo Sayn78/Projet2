@@ -9,14 +9,15 @@
 
 - name: Copier les fichiers YAML de l'application Node.js
   ansible.builtin.copy:
-    src: "{{ item }}"
+    src: "{{ role_path }}/files/{{ item }}"
     dest: "/home/ubuntu/k8s-manifests/"
     owner: ubuntu
     group: ubuntu
     mode: '0644'
   loop:
-    - "deployment.yaml"
-    - "service.yaml"
+    - deployment.yaml
+    - service.yaml
+
 
 - name: Appliquer le déploiement Kubernetes
   ansible.builtin.shell: |
