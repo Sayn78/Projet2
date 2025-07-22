@@ -5,3 +5,7 @@
     kubectl apply -f /home/ubuntu/k8s-manifests/service.yaml
   args:
     executable: /bin/bash
+  become: true
+  become_user: ubuntu
+  environment:
+    KUBECONFIG: /home/ubuntu/.kube/config
