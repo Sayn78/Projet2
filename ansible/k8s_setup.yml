@@ -21,3 +21,9 @@
     - import_tasks: roles/k8s/tasks/init_master.yml
       tags: init-master
 
+- name: Déployer l'application Node.js sur Kubernetes
+  hosts: k8s
+  become: true
+  tasks:
+    - import_tasks: roles/k8s/tasks/deploy_app.yml
+      tags: deploy-app
