@@ -55,9 +55,10 @@ resource "aws_route_table_association" "a" {
 # Security Group
 resource "aws_security_group" "ssh_web" {
   name        = "Projet2-SG"
-  description = "Allow SSH and HTTP"
+  description = "Allow Kubernetes, SSH, NodePort and HTTP"
   vpc_id      = aws_vpc.main_vpc.id
 
+  # SSH
   ingress {
     from_port   = 22
     to_port     = 22
@@ -65,13 +66,7 @@ resource "aws_security_group" "ssh_web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 3000
-    to_port     = 3001
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
+  # HTTP
   ingress {
     from_port   = 80
     to_port     = 80
@@ -79,6 +74,39 @@ resource "aws_security_group" "ssh_web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Kubernetes API Server
+  ingress {
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # NodePort (application Kubernetes exposée)
+  ingress {
+    from_port   = 30000
+    to_port     = 32767
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Kubernetes internal components (scheduler, controller, etc.)
+  ingress {
+    from_port   = 10250
+    to_port     = 10259
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # DNS (si CoreDNS en UDP)
+  ingress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Sortie autorisée
   egress {
     from_port   = 0
     to_port     = 0
@@ -90,6 +118,7 @@ resource "aws_security_group" "ssh_web" {
     Name = "Projet2-SG"
   }
 }
+
 
 # Instance EC2
 resource "aws_instance" "k8s_node" {
