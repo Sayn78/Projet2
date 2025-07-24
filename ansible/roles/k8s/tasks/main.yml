@@ -20,7 +20,7 @@
 - name: Ajouter la clé GPG de Kubernetes
   become: true
   ansible.builtin.shell: |
-    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | \
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | \
     gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   args:
     creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
@@ -28,8 +28,9 @@
 - name: Ajouter le dépôt Kubernetes
   become: true
   ansible.builtin.apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /"
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /"
     state: present
+
     filename: kubernetes
 
 - name: Installer kubelet, kubeadm, kubectl
@@ -41,7 +42,6 @@
       - kubectl
     state: present
     update_cache: true
-
 
 
 - name: Créer le dossier pour les manifests

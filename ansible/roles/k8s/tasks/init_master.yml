@@ -6,7 +6,7 @@
 
 - name: Initialiser le cluster Kubernetes (master)
   become: true
-  command: kubeadm init --pod-network-cidr={{ pod_network_cidr }} --ignore-preflight-errors=NumCPU,Mem,CRI
+  command: kubeadm init --pod-network-cidr={{ pod_network_cidr }}
   when: not admin_conf_file.stat.exists
   args:
     creates: /etc/kubernetes/admin.conf
