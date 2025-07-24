@@ -24,14 +24,16 @@
     mode: '0644'
   register: kubernetes_key_download
 
-- name: Convertir la clé en format GPG
-  ansible.builtin.command: >
-    gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg /tmp/kubernetes-release.key
+- name: Ajouter la clé GPG de Kubernetes
+  become: true
+  ansible.builtin.shell: |
+    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | \
+    gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   args:
     creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-  when: kubernetes_key_download is changed
 
 - name: Ajouter le dépôt Kubernetes
+  become: true
   ansible.builtin.apt_repository:
     repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /"
     state: present
