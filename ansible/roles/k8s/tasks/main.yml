@@ -1,28 +1,21 @@
 ---
-
-- name: Désactiver le swap temporairement
-  ansible.builtin.shell: swapoff -a
-  args:
-    warn: false
+- name: Désactiver le swap
+  become: true
+  ansible.builtin.command: swapoff -a
 
 - name: Commenter les lignes de swap dans /etc/fstab
+  become: true
   ansible.builtin.replace:
     path: /etc/fstab
     regexp: '^([^#].*swap)'
     replace: '# \1'
 
 - name: Créer le dossier pour les clés APT
+  become: true
   ansible.builtin.file:
     path: /etc/apt/keyrings
     state: directory
     mode: '0755'
-
-- name: Télécharger la clé GPG de Kubernetes
-  ansible.builtin.get_url:
-    url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
-    dest: /tmp/kubernetes-release.key
-    mode: '0644'
-  register: kubernetes_key_download
 
 - name: Ajouter la clé GPG de Kubernetes
   become: true
@@ -39,12 +32,8 @@
     state: present
     filename: kubernetes
 
-- name: Vérifier si kubeadm est déjà installé
-  ansible.builtin.command: dpkg -s kubeadm
-  register: kubeadm_status
-  ignore_errors: true
-
-- name: Installer kubelet, kubeadm, kubectl si non installés
+- name: Installer kubelet, kubeadm, kubectl
+  become: true
   ansible.builtin.apt:
     name:
       - kubelet
@@ -52,17 +41,13 @@
       - kubectl
     state: present
     update_cache: true
-  when: kubeadm_status.rc != 0
-
-- name: Vérifier si kubelet est déjà marqué en hold
-  ansible.builtin.command: apt-mark showhold
-  register: hold_status
 
 - name: Geler kubelet pour éviter les mises à jour
-  ansible.builtin.command: apt-mark hold kubelet
-  when: "'kubelet' not in hold_status.stdout"
+  become: true
+  ansible.builtin.shell: apt-mark hold kubelet
 
-- name: Créer le dossier pour les manifests Kubernetes
+
+- name: Créer le dossier pour les manifests
   ansible.builtin.file:
     path: /home/ubuntu/k8s-manifests
     state: directory
