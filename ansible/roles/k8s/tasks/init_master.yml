@@ -1,26 +1,53 @@
 ---
+- name: Vérifier si le cluster est déjà initialisé (admin.conf présent)
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: admin_conf_file
+
 - name: Initialiser le cluster Kubernetes (master)
   become: true
-  ansible.builtin.command: kubeadm init --pod-network-cidr={{ pod_network_cidr }} --ignore-preflight-errors=NumCPU,Mem,CRI
+  command: kubeadm init --pod-network-cidr={{ pod_network_cidr }} --ignore-preflight-errors=NumCPU,Mem,CRI
+  when: not admin_conf_file.stat.exists
   args:
     creates: /etc/kubernetes/admin.conf
 
+- name: Vérifier si ~/.kube/config existe
+  stat:
+    path: /home/ubuntu/.kube/config
+  register: kube_config_file
 
-- name: Créer le dossier .kube
-  become: true
-  ansible.builtin.file:
+- name: Créer le dossier .kube pour l'utilisateur ubuntu
+  file:
     path: /home/ubuntu/.kube
     state: directory
     owner: ubuntu
     group: ubuntu
     mode: '0755'
+  when: not kube_config_file.stat.exists
 
-- name: Copier la config admin.conf dans ~/.kube/config
-  ansible.builtin.copy:
+- name: Copier la config admin.conf dans ~/.kube/config si absent
+  copy:
     src: /etc/kubernetes/admin.conf
     dest: /home/ubuntu/.kube/config
     remote_src: true
     owner: ubuntu
     group: ubuntu
     mode: '0600'
+  when: not kube_config_file.stat.exists
 
+- name: Attendre que kube-apiserver soit UP (componentstatuses OK)
+  shell: |
+    kubectl get componentstatuses --kubeconfig /etc/kubernetes/admin.conf | grep -v Healthy && exit 1 || exit 0
+  register: apiserver_health
+  retries: 10
+  delay: 10
+  until: apiserver_health.rc == 0
+
+- name: Appliquer le réseau Flannel (CNI)
+  become: true
+  become_user: ubuntu
+  shell: |
+    kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  environment:
+    KUBECONFIG: /home/ubuntu/.kube/config
+  when: not admin_conf_file.stat.exists

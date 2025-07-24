@@ -5,12 +5,14 @@
   become: true
   roles:
     - containerd
+  tags: containerd
 
 - name: Installer Kubernetes sur la VM EC2
   hosts: k8s
   become: true
   roles:
     - k8s
+  tags: install-k8s
 
 - name: Initialiser le master Kubernetes
   hosts: k8s
