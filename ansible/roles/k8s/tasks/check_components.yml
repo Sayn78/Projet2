@@ -1,0 +1,12 @@
+# roles/k8s/tasks/check_components.yml
+- name: Vérifier que kube-apiserver tourne
+  ansible.builtin.shell: crictl ps -a | grep kube-apiserver | grep Running
+  register: kube_apiserver_status
+  failed_when: kube_apiserver_status.rc != 0
+  changed_when: false
+
+- name: Vérifier que etcd tourne
+  ansible.builtin.shell: crictl ps -a | grep etcd | grep Running
+  register: etcd_status
+  failed_when: etcd_status.rc != 0
+  changed_when: false

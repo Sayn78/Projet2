@@ -1,0 +1,26 @@
+---
+# roles/k8s/tasks/reset_cluster.yml
+- name: Arrêter kubelet
+  ansible.builtin.systemd:
+    name: kubelet
+    state: stopped
+    enabled: no
+
+- name: Réinitialiser kubeadm
+  ansible.builtin.command: kubeadm reset -f
+
+- name: Supprimer les fichiers de configuration Kubernetes
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/kubernetes
+    - /var/lib/etcd
+    - /var/lib/kubelet
+    - /home/ubuntu/.kube
+
+- name: Supprimer tous les conteneurs containerd
+  ansible.builtin.shell: |
+    crictl rm -f $(crictl ps -aq) || true
+  args:
+    warn: false

@@ -1,4 +1,9 @@
 ---
+- name: Réinitialiser complètement Kubernetes
+  hosts: k8s
+  become: true
+  tasks:
+    - import_tasks: roles/k8s/tasks/reset_cluster.yml
 
 - name: Préparer le runtime containerd
   hosts: k8s
@@ -22,6 +27,12 @@
   tasks:
     - import_tasks: roles/k8s/tasks/init_master.yml
       tags: init-master
+      
+- name: Vérifier que les composants de base tournent
+  hosts: k8s
+  become: true
+  tasks:
+    - import_tasks: roles/k8s/tasks/check_components.yml
 
 - name: Déployer l'application Node.js sur Kubernetes
   hosts: k8s
