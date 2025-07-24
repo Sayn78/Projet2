@@ -42,9 +42,6 @@
     state: present
     update_cache: true
 
-- name: Geler kubelet pour éviter les mises à jour
-  become: true
-  ansible.builtin.shell: apt-mark hold kubelet
 
 
 - name: Créer le dossier pour les manifests
