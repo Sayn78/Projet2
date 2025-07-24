@@ -1,12 +1,4 @@
 ---
-- name: Activer le routage IP (net.ipv4.ip_forward)
-  ansible.builtin.sysctl:
-    name: net.ipv4.ip_forward
-    value: '1'
-    state: present
-    reload: yes
-
-
 - name: Initialiser le cluster Kubernetes (master)
   become: true
   ansible.builtin.command: kubeadm init --pod-network-cidr={{ pod_network_cidr }} --ignore-preflight-errors=NumCPU,Mem,CRI
@@ -31,7 +23,4 @@
     owner: ubuntu
     group: ubuntu
     mode: '0600'
-
-- name: Déployer l'application Node.js
-  import_tasks: deploy_app.yml
 
