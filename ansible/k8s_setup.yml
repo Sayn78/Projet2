@@ -1,9 +1,9 @@
 ---
-- name: Réinitialiser complètement Kubernetes
-  hosts: k8s
-  become: true
-  tasks:
-    - import_tasks: roles/k8s/tasks/reset_cluster.yml
+#- name: Réinitialiser complètement Kubernetes
+#  hosts: k8s
+#  become: true
+#  tasks:
+#    - import_tasks: roles/k8s/tasks/reset_cluster.yml
 
 - name: Préparer le runtime containerd
   hosts: k8s
