@@ -35,6 +35,16 @@
     mode: '0600'
   when: not kube_config_file.stat.exists
 
+- name: Activer kubelet au démarrage
+  ansible.builtin.systemd:
+    name: kubelet
+    enabled: true
+
+- name: Démarrer le service kubelet
+  ansible.builtin.systemd:
+    name: kubelet
+    state: started
+
 - name: Attendre que kube-apiserver soit UP (componentstatuses OK)
   shell: |
     kubectl get componentstatuses --kubeconfig /etc/kubernetes/admin.conf | grep -v Healthy && exit 1 || exit 0
