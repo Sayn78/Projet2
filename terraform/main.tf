@@ -6,7 +6,6 @@ provider "aws" {
 resource "aws_security_group" "ssh_web" {
   name        = "Projet2-SG"
   description = "Allow Kubernetes, SSH, NodePort and HTTP"
-  vpc_id      = aws_vpc.main_vpc.id
 
   # SSH
   ingress {
