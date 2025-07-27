@@ -74,7 +74,6 @@ resource "aws_instance" "k8s_node" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
   key_name                    = var.key_name
-  subnet_id                   = aws_subnet.main_subnet.id
   vpc_security_group_ids      = [aws_security_group.ssh_web.id]
   associate_public_ip_address = true
 
