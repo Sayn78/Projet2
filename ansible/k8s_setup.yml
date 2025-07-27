@@ -23,7 +23,7 @@
   hosts: k8s
   become: true
   vars:
-    pod_network_cidr: "10.244.0.0/16"
+    pod_network_cidr: "172.17.0.0/16"
   tasks:
     - import_tasks: roles/k8s/tasks/init_master.yml
       tags: init-master
