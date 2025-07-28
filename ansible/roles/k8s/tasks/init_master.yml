@@ -53,13 +53,6 @@
     name: kubelet
     state: started
 
-- name: Attendre que kube-apiserver soit UP (componentstatuses OK)
-  shell: |
-    kubectl get componentstatuses --kubeconfig /etc/kubernetes/admin.conf | grep -v Healthy && exit 1 || exit 0
-  register: apiserver_health
-  retries: 10
-  delay: 10
-  until: apiserver_health.rc == 0
 
 - name: Appliquer le réseau Flannel (CNI)
   become: true
