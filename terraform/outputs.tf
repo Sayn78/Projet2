@@ -1,7 +1,7 @@
-output "instance_ip" {
-  value = aws_eip.k8s_eip.public_ip
+output "eks_cluster_endpoint" {
+  value = aws_eks_cluster.eks_cluster.endpoint
 }
 
-output "ssh_connection" {
-  value = "ssh -i ${var.private_key_path} ubuntu@${aws_eip.k8s_eip.public_ip}"
+output "eks_cluster_name" {
+  value = aws_eks_cluster.eks_cluster.name
 }
