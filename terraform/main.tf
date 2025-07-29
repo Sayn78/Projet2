@@ -23,6 +23,18 @@ resource "aws_subnet" "main_subnet" {
   }
 }
 
+resource "aws_subnet" "secondary_subnet" {
+  vpc_id                  = aws_vpc.main_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "${var.aws_region}b"
+
+  tags = {
+    Name = "Projet2-Subnet-2"
+  }
+}
+
+
 # Internet Gateway
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.main_vpc.id
@@ -51,6 +63,12 @@ resource "aws_route_table_association" "a" {
   subnet_id      = aws_subnet.main_subnet.id
   route_table_id = aws_route_table.main_rt.id
 }
+
+resource "aws_route_table_association" "b" {
+  subnet_id      = aws_subnet.secondary_subnet.id
+  route_table_id = aws_route_table.main_rt.id
+}
+
 
 # Security Group
 resource "aws_security_group" "ssh_web" {
@@ -118,9 +136,13 @@ resource "aws_eks_cluster" "eks_cluster" {
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
-    subnet_ids = [aws_subnet.main_subnet.id]
-    endpoint_public_access = true
+    subnet_ids = [
+      aws_subnet.main_subnet.id,
+      aws_subnet.secondary_subnet.id
+    ]
+    security_group_ids = [aws_security_group.ssh_web.id]
   }
+
 
   kubernetes_network_config {
     service_ipv4_cidr = "10.100.0.0/16"
