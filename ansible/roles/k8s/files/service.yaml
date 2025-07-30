@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: node-app-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: projet2-node-app
   ports:
