@@ -69,67 +69,6 @@ resource "aws_route_table_association" "b" {
   route_table_id = aws_route_table.main_rt.id
 }
 
-
-# Security Group
-resource "aws_security_group" "ssh_web" {
-  name        = "Projet2-SG"
-  description = "Allow Kubernetes, SSH, NodePort and HTTP"
-  vpc_id      = aws_vpc.main_vpc.id
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 6443
-    to_port     = 6443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 30000
-    to_port     = 32767
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 10250
-    to_port     = 10259
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 53
-    to_port     = 53
-    protocol    = "udp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "Projet2-SG"
-  }
-}
-
 # EKS Cluster
 resource "aws_eks_cluster" "eks_cluster" {
   name     = "projet2-eks-cluster"
