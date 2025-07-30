@@ -3,14 +3,6 @@ resource "aws_security_group" "eks_nodes" {
   description = "Security Group for EKS Worker Nodes"
   vpc_id      = aws_vpc.main_vpc.id
 
-  # SSH depuis TON IP uniquement
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["TON_IP_PUBLIC/32"]
-  }
-
   # Communication avec le Control Plane (EKS <-> nodes)
   ingress {
     from_port   = 1025
