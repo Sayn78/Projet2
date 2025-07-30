@@ -53,6 +53,11 @@ resource "aws_route_table" "main_rt" {
     gateway_id = aws_internet_gateway.gw.id
   }
 
+  route {
+    cidr_block = "10.0.0.0/16"
+    gateway_id = "local"
+  }  
+
   tags = {
     Name = "Projet2-RouteTable"
   }
@@ -79,7 +84,7 @@ resource "aws_eks_cluster" "eks_cluster" {
       aws_subnet.main_subnet.id,
       aws_subnet.secondary_subnet.id
     ]
-    security_group_ids = [aws_security_group.eks_nodes.id]
+
   }
 
 
