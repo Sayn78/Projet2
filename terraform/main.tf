@@ -79,7 +79,7 @@ resource "aws_eks_cluster" "eks_cluster" {
       aws_subnet.main_subnet.id,
       aws_subnet.secondary_subnet.id
     ]
-    security_group_ids = [aws_security_group.ssh_web.id]
+    security_group_ids = [aws_security_group.eks_nodes.id]
   }
 
 
