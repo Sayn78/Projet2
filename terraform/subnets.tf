@@ -39,7 +39,7 @@ resource "aws_subnet" "public_zone2" {
   vpc_id                        = aws_vpc.main.id
   cidr_block                    = "10.0.96.0/19"
   availability_zone             = local.zone2
- map_public_ip_on_launch        = true
+  map_public_ip_on_launch       = true
   
   tags = {
     Name                                                    = "${local.env}-public-${local.zone2}"
